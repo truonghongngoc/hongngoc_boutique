@@ -1,0 +1,82 @@
+version: '3.8'
+services:
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/localhost.pem:/etc/nginx/conf.d/localhost.pem
+      - ./nginx/localhost-key.pem:/etc/nginx/conf.d/localhost-key.pem
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+      - queues
+    networks:
+      - app_default
+
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - app_default
+
+  api:
+    environment:
+      DB_HOST: db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/dist
+    command: npm run start:dev
+    ports:
+      - '3001:3001'
+    depends_on:
+      - db
+    networks:
+      - app_default
+
+  queues:
+    environment:
+      DB_HOST: db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/dist
+    command: npm run start-queues:dev
+    ports:
+      - '3002:3002'
+    depends_on:
+      - redis
+      - db
+    networks:
+      - app_default
+
+  redis:
+    image: 'redis:latest'
+    ports:
+      - '6379:6379'
+    networks:
+      - app_default
+
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  app_default:
+    name: app_default
+    driver: bridge
