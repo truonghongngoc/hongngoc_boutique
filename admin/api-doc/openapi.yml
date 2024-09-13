@@ -1,0 +1,203 @@
+openapi: 3.0.0
+paths:
+  /api/v1/health:
+    get:
+      operationId: AppCheckHealth
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - App
+  /api/v1/auth/sign-in:
+    post:
+      operationId: AuthSignIn
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthControllerSignInBodyRequest'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthControllerSignInResponse'
+      tags:
+        - Auth
+  /api/v1/auth/verify:
+    patch:
+      operationId: AuthVerify
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthControllerVerifyBodyRequest'
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Auth
+  /api/v1/auth/forgot-password:
+    patch:
+      operationId: AuthForgotPassword
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthControllerForgotPasswordBodyRequest'
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Auth
+  /api/v1/auth/change-password:
+    patch:
+      operationId: AuthResetPassword
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthControllerChangePasswordBodyRequest'
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Auth
+  /api/v1/auth/sign-up:
+    post:
+      operationId: AuthSignUp
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthControllerSignUpBodyRequest'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthControllerSignUpResponse'
+      tags:
+        - Auth
+  /api/v1/auth/profile:
+    get:
+      operationId: AuthGetProfile
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthControllerGetProfileResponse'
+      tags:
+        - Auth
+      security:
+        - bearer: []
+info:
+  title: Trading Plan
+  description: Trading Plan API
+  version: '1.0'
+  contact: {}
+tags: []
+servers: []
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+  schemas:
+    AuthControllerSignInBodyRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+    AuthControllerSignInResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+      required:
+        - accessToken
+    AuthControllerVerifyBodyRequest:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+        - token
+    AuthControllerForgotPasswordBodyRequest:
+      type: object
+      properties:
+        email:
+          type: string
+      required:
+        - email
+    AuthControllerChangePasswordBodyRequest:
+      type: object
+      properties:
+        token:
+          type: string
+        password:
+          type: string
+      required:
+        - token
+        - password
+    UserDto:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+      required:
+        - email
+        - password
+        - name
+    OrganizationDto:
+      type: object
+      properties:
+        domain:
+          type: string
+        name:
+          type: string
+      required:
+        - domain
+        - name
+    AuthControllerSignUpBodyRequest:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserDto'
+        organization:
+          $ref: '#/components/schemas/OrganizationDto'
+      required:
+        - user
+        - organization
+    AuthControllerSignUpResponse:
+      type: object
+      properties: {}
+    AuthControllerGetProfileResponse:
+      type: object
+      properties: {}
